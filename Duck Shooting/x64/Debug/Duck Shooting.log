@@ -1,6 +1,16 @@
-﻿  Duck.cpp
-C:\Users\Rishi\Desktop\Duck Shooting\Duck Shooting\Source\Models\Duck.cpp(12,45): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\Rishi\Desktop\Duck Shooting\Duck Shooting\Source\Models\Duck.cpp(12,31): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\Rishi\Desktop\Duck Shooting\Duck Shooting\Source\Models\Duck.cpp(15,18): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-C:\Users\Rishi\Desktop\Duck Shooting\Duck Shooting\Source\Models\Duck.cpp(16,18): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+﻿  GameController.cpp
+  Main.cpp
+C:\Users\Rishi\Desktop\Duck Shooting\Duck Shooting\Source\Controllers\Main.cpp(21,77): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+C:\Users\Rishi\Desktop\Duck Shooting\Duck Shooting\Source\Controllers\Main.cpp(21,77): warning C4244:         with
+C:\Users\Rishi\Desktop\Duck Shooting\Duck Shooting\Source\Controllers\Main.cpp(21,77): warning C4244:         [
+C:\Users\Rishi\Desktop\Duck Shooting\Duck Shooting\Source\Controllers\Main.cpp(21,77): warning C4244:             T=float
+C:\Users\Rishi\Desktop\Duck Shooting\Duck Shooting\Source\Controllers\Main.cpp(21,77): warning C4244:         ]
+C:\Users\Rishi\Desktop\Duck Shooting\Duck Shooting\Source\Controllers\Main.cpp(21,56): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+C:\Users\Rishi\Desktop\Duck Shooting\Duck Shooting\Source\Controllers\Main.cpp(21,56): warning C4244:         with
+C:\Users\Rishi\Desktop\Duck Shooting\Duck Shooting\Source\Controllers\Main.cpp(21,56): warning C4244:         [
+C:\Users\Rishi\Desktop\Duck Shooting\Duck Shooting\Source\Controllers\Main.cpp(21,56): warning C4244:             T=float
+C:\Users\Rishi\Desktop\Duck Shooting\Duck Shooting\Source\Controllers\Main.cpp(21,56): warning C4244:         ]
+  Duck.cpp
+  GameView.cpp
+  Generating Code...
   Duck Shooting.vcxproj -> C:\Users\Rishi\Desktop\Duck Shooting\x64\Debug\Duck Shooting.exe
