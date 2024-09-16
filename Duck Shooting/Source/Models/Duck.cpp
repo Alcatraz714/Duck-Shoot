@@ -7,8 +7,8 @@ Duck::Duck(sf::Texture& texture, bool isExplosive)
     : explosive(isExplosive), alive(true), points(isExplosive ? 5 : 1), movementTimer(0.0f) {
     sprite.setTexture(texture);
     sprite.setPosition(0, 600); // Start from the bottom-left corner
-    velocity = sf::Vector2f(50, -100); // Start moving up
-    sprite.setScale(0.3f, 0.3f);  // Adjust sprite size
+    velocity = sf::Vector2f(300, -300); // Start moving up was (50, -100)
+    sprite.setScale(0.5f, 0.5f);  // Adjust sprite size
 }
 
 void Duck::die() {
@@ -21,8 +21,8 @@ void Duck::move(float deltaTime) {
     // Define the different movement stages: up, across, down
     if (sprite.getPosition().y <= 100 && velocity.y < 0) {
         // Reached near the top, move to the right and down
-        velocity.x = 200;
-        velocity.y = 200;
+        velocity.x = 400;
+        velocity.y = 400;
     }
 
     sprite.move(velocity * deltaTime);
