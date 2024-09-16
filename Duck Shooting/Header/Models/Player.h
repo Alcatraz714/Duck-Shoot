@@ -1,14 +1,19 @@
 #pragma once
+#include <SFML/Graphics.hpp>
 
 class Player {
 public:
-    int health;
-    int ammo;
-    int score;
-    int areaBullet; // Number of area bullets available
-
     Player();
-    void resetAmmo(int wave);
-    void loseHealth();
-    void gainHealth(); // Power-up to gain health
+
+    void shoot();
+    void increaseScore(int amount);
+    void increaseAmmo(int amount);
+    int getScore() const { return score; }
+    int getAmmo() const { return ammo; }
+    bool hasAmmo() const { return ammo > 0; }
+
+private:
+    int score;
+    int ammo;
 };
+

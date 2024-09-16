@@ -1,22 +1,13 @@
 #include "../../Duck Shooting/Header/Models/Duck.h"
 #include <cstdlib> // For rand()
-#include <ctime>   // For seeding random values
+#include <ctime>   // For random seed
+#include <cstdlib>
 
 Duck::Duck(sf::Texture& texture, bool isExplosive)
-    : explosive(isExplosive), alive(true), points(isExplosive ? 5 : 1) {
-
-    // Set random seed for more varied positions
-    std::srand(static_cast<unsigned int>(std::time(nullptr)));
-
+    : explosive(isExplosive), alive(true), points(isExplosive ? 5 : 1), movementTimer(0.0f) {
     sprite.setTexture(texture);
-    sprite.setPosition(rand() % 800, rand() % 600); // Random starting position
-
-    // Ensure a slower velocity
-    float speedX = ((rand() % 2 == 0 ? 1 : -1) * (rand() % 30 + 10)); // Reduced speed range for slower movement
-    float speedY = ((rand() % 2 == 0 ? 1 : -1) * (rand() % 30 + 10)); // Reduced speed range for slower movement
-
-    velocity = sf::Vector2f(speedX, speedY);
-
+    sprite.setPosition(0, 600); // Start from the bottom-left corner
+    velocity = sf::Vector2f(50, -100); // Start moving up
     sprite.setScale(0.3f, 0.3f);  // Adjust sprite size
 }
 
@@ -25,13 +16,21 @@ void Duck::die() {
 }
 
 void Duck::move(float deltaTime) {
+    movementTimer += deltaTime;
+
+    // Define the different movement stages: up, across, down
+    if (sprite.getPosition().y <= 100 && velocity.y < 0) {
+        // Reached near the top, move to the right and down
+        velocity.x = 200;
+        velocity.y = 200;
+    }
+
     sprite.move(velocity * deltaTime);
 
-    // Bounce off the screen edges
-    if (sprite.getPosition().x < 0 || sprite.getPosition().x + sprite.getGlobalBounds().width > 800) {
-        velocity.x = -velocity.x;
-    }
-    if (sprite.getPosition().y < 0 || sprite.getPosition().y + sprite.getGlobalBounds().height > 600) {
-        velocity.y = -velocity.y;
+    // Remove duck if it goes beyond the right boundary
+    if (sprite.getPosition().x > 800 || sprite.getPosition().y > 600) {
+        alive = false; // The duck has completed its path and will be removed
     }
 }
+
+

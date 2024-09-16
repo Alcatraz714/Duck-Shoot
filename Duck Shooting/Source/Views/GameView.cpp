@@ -1,82 +1,68 @@
 #include "../../Duck Shooting/Header/Views/GameView.h"
 #include <iostream>
 
-GameView::GameView() {
-    // Load font for displaying text
-    font.loadFromFile("assets/OpenSans.ttf");
-    playerText.setFont(font);
-    playerText.setCharacterSize(24);
-    playerText.setFillColor(sf::Color::White);
-
-    // Load textures and sounds
+GameView::GameView(sf::RenderWindow& win, Player& playerRef, std::vector<Duck>& duckList)
+    : window(win), player(playerRef), ducks(duckList) {
     loadAssets();
 
-    // Set up the crosshair sprite
-    crosshair.setTexture(crosshairTexture);
-    crosshair.setScale(0.05f, 0.05f); // Scale down the crosshair
+    // Set up UI text elements
+    scoreText.setFont(font);
+    scoreText.setCharacterSize(24);
+    scoreText.setFillColor(sf::Color::White);
 
-    // Set up the background rectangle (dynamic color based on wave)
-    background.setSize(sf::Vector2f(800, 600));
+    ammoText.setFont(font);
+    ammoText.setCharacterSize(24);
+    ammoText.setFillColor(sf::Color::White);
 
-    // Start background music
-    backgroundMusic.setLoop(true);
-    backgroundMusic.play();
+    // Set up game over text
+    gameOverText.setFont(font);
+    gameOverText.setCharacterSize(48);
+    gameOverText.setFillColor(sf::Color::Red);
+    gameOverText.setString("Game Over!");
+    gameOverText.setPosition(200, 250);  // Center the game over text
 }
 
 void GameView::loadAssets() {
-    // Load duck sprite texture
-    duckTexture.loadFromFile("assets/duck.png");
+    // Load font
+    if (!font.loadFromFile("assets/OpenSans.ttf")) {
+        std::cerr << "Error: Could not load font from 'assets/arial.ttf'!" << std::endl;
+    }
 
-    // Load crosshair texture
-    crosshairTexture.loadFromFile("assets/crosshair.png");
+    // Set up background texture
+    if (!backgroundTexture.loadFromFile("assets/background.png")) {
+        std::cerr << "Error: Could not load background texture from 'assets/background.png'!" << std::endl;
+    }
 
-    // Load gunshot and quack sounds
-    shotBuffer.loadFromFile("assets/gunshot.wav");
-    quackBuffer.loadFromFile("assets/quack.wav");
-
-    gunshot.setBuffer(shotBuffer);
-    quack.setBuffer(quackBuffer);
-
-    // Load background music
-    backgroundMusic.openFromFile("assets/background_music.ogg");
+    backgroundSprite.setTexture(backgroundTexture);
 }
 
-void GameView::display(sf::RenderWindow& window, const Player& player, const std::vector<Duck>& ducks) {
-    window.clear();
+void GameView::updateUI() {
+    // Update score and ammo display
+    scoreText.setString("Score: " + std::to_string(player.getScore()));
+    ammoText.setString("Ammo: " + std::to_string(player.getAmmo()));
 
-    // Draw background
-    window.draw(background);
+    // Position UI elements
+    scoreText.setPosition(10, 10);
+    ammoText.setPosition(10, 40);
+}
 
-    // Display player stats
-    playerText.setString("Health: " + std::to_string(player.health) +
-        " Ammo: " + std::to_string(player.ammo) +
-        " Score: " + std::to_string(player.score));
-    window.draw(playerText);
+void GameView::render(bool gameOver) {
+    window.clear(sf::Color::Black); // Set black background
 
     // Draw ducks
     for (const auto& duck : ducks) {
-        if (duck.alive) {
+        if (duck.isAlive()) {
             window.draw(duck.sprite);
         }
     }
 
-    // Draw the crosshair at the current mouse position
-    sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-    crosshair.setPosition(mousePos.x - crosshair.getGlobalBounds().width / 2, mousePos.y - crosshair.getGlobalBounds().height / 2);
-    window.draw(crosshair);
+    // Draw UI elements
+    window.draw(scoreText);
+    window.draw(ammoText);
+
+    if (gameOver) {
+        window.draw(gameOverText);
+    }
 
     window.display();
-}
-
-void GameView::gameOver(sf::RenderWindow& window, const Player& player) {
-    window.clear();
-    playerText.setString("Game Over! Final Score: " + std::to_string(player.score));
-    window.draw(playerText);
-    window.display();
-}
-
-void GameView::updateBackground(int wave) {
-    // Make the background darker as waves progress
-    int colorValue = 255 - wave * 10;
-    background.setFillColor(sf::Color(colorValue, colorValue, colorValue));
 }
