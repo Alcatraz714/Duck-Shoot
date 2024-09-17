@@ -1,108 +1,89 @@
 #include "../../Duck Shooting/Header/Controllers/GameController.h"
-#include <SFML/Window.hpp>
-#include <SFML/Graphics.hpp>
-#include <cmath>
+#include <iostream>
 
-GameController::GameController() : wave(1), areaBulletActive(false) {}
 
-void GameController::startWave() {
+GameController::GameController(sf::RenderWindow& win)
+    : window(win), player(), gameView(win, player, ducks), wave(1), gameOver(false), spawnTimer(0.0f), currentDuckIndex(0) {
+    loadAssets();
+    startNewWave();
+}
+
+void GameController::loadAssets() {
+    if (!duckTexture.loadFromFile("assets/duck.png")) {
+        std::cerr << "Error: Could not load duck texture from 'assets/duck.png'!" << std::endl;
+    }
+}
+
+void GameController::startNewWave() {
     ducks.clear();
-    for (int i = 0; i < wave * 2; ++i) {
-        ducks.emplace_back(view.duckTexture, rand() % 5 == 0);  // 20% chance of explosive duck
+    int numDucks = wave;  // Number of ducks in the current wave
+    for (int i = 0; i < numDucks; ++i) {
+        ducks.emplace_back(duckTexture);
     }
-    player.resetAmmo(wave);
-    view.updateBackground(wave);
+    currentDuckIndex = 0; // Reset to the first duck
+    spawnTimer = 0.0f;    // Reset spawn timer
 }
 
-void GameController::processShot(sf::Vector2i mousePos) {
-    if (player.ammo <= 0) return;
-    player.ammo--;
+void GameController::update(float deltaTime) {
+    if (isGameOver()) return;
 
-    // Check for area bullet usage
-    if (areaBulletActive && player.areaBullet > 0) {
-        player.areaBullet--;
-        for (auto& duck : ducks) {
-            float dist = std::sqrt(std::pow(duck.sprite.getPosition().x - mousePos.x, 2) +
-                std::pow(duck.sprite.getPosition().y - mousePos.y, 2));
-            if (dist < 50 && duck.alive) {  // 50-pixel radius for area bullet
-                duck.die();
-                player.score += duck.points;
-                if (duck.explosive) checkExplosion(duck);
-            }
-        }
-        view.gunshot.play();
+    spawnTimer += deltaTime;
+
+    // Introduce ducks one by one based on the spawn timer
+    if (currentDuckIndex < ducks.size() && spawnTimer > 1.5f) {  // Delay of 1.5 seconds between ducks
+        spawnTimer = 0.0f;
+        currentDuckIndex++;
     }
-    else {
-        for (auto& duck : ducks) {
-            if (duck.sprite.getGlobalBounds().contains(mousePos.x, mousePos.y) && duck.alive) {
-                duck.die();
-                player.score += duck.points;
-                view.quack.play();
-                if (duck.explosive) checkExplosion(duck);
-                break;
-            }
+
+    // Move the currently spawned ducks
+    for (int i = 0; i < currentDuckIndex; ++i) {
+        if (ducks[i].isAlive()) {
+            ducks[i].move(deltaTime);
         }
     }
-}
 
-bool GameController::checkWaveEnd() {
-    for (const auto& duck : ducks) {
-        if (duck.alive) return false;
+    checkCollisions();
+    gameView.updateUI();
+
+    // If all ducks are dead, start a new wave
+    if (std::all_of(ducks.begin(), ducks.end(), [](const Duck& d) { return !d.isAlive(); })) {
+        ++wave;
+        startNewWave();
     }
-    return true;
-}
 
-void GameController::run() {
-    sf::RenderWindow window(sf::VideoMode(800, 600), "Duck Hunt");
-
-    view.loadAssets();
-    startWave();
-
-    while (window.isOpen()) {
-        sf::Event event;
-        while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) window.close();
-
-            // Left-click for point and click bullet
-            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-                processShot(sf::Mouse::getPosition(window));
-            }
-
-            // Right-click for area bullet
-            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Right) {
-                areaBulletActive = true;
-                processShot(sf::Mouse::getPosition(window));
-                areaBulletActive = false;
-            }
-        }
-
-        view.display(window, player, ducks);
-
-        if (checkWaveEnd()) {
-            ++wave;
-            startWave();
-        }
-
-        if (player.health <= 0) {
-            view.gameOver(window, player);
-            window.close();
-        }
+    // End game when player runs out of ammo and ducks are alive
+    if (!player.hasAmmo() && std::any_of(ducks.begin(), ducks.end(), [](const Duck& d) { return d.isAlive(); })) {
+        gameOver = true;
     }
 }
 
-void GameController::checkExplosion(Duck& explosiveDuck) {
+void GameController::render() {
+    gameView.render(gameOver);
+}
+
+void GameController::handleMouseClick(const sf::Vector2f& position) {
+    if (!player.hasAmmo()) return;
+
+    player.shoot();
+
     for (auto& duck : ducks) {
-        float dist = std::sqrt(std::pow(duck.sprite.getPosition().x - explosiveDuck.sprite.getPosition().x, 2) +
-            std::pow(duck.sprite.getPosition().y - explosiveDuck.sprite.getPosition().y, 2));
-        if (dist < 100 && duck.alive) {  // 100-pixel radius explosion
+        if (duck.isAlive() && duck.getBounds().contains(position)) {
             duck.die();
-            player.score += duck.points;
+            player.increaseScore(10);
+            player.increaseAmmo(2);  // Add 2 bullets after each kill
+            return;
         }
     }
 }
 
-void GameController::handlePowerUp() {
-    if (rand() % 10 == 0) {  // 10% chance of power-up
-        player.gainHealth();
-    }
+void GameController::checkCollisions() {
+    // Handle future collisions if needed
+}
+
+bool GameController::isGameOver() const {
+    return gameOver;
+}
+
+int GameController::getPlayerScore() const {
+    return player.getScore();
 }

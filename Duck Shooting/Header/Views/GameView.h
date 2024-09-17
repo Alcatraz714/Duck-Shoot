@@ -7,18 +7,20 @@
 
 class GameView {
 public:
+    GameView(sf::RenderWindow& window, Player& player, std::vector<Duck>& ducks);
+
+    void render(bool gameOver);
+    void updateUI();
+    void loadAssets();
+
+private:
+    sf::RenderWindow& window;
+    Player& player;
+    std::vector<Duck>& ducks;
     sf::Font font;
-    sf::Text playerText;
-    sf::Sprite crosshair;
-    sf::Texture crosshairTexture;
-    sf::Texture duckTexture;
-    sf::Music backgroundMusic;
-    sf::SoundBuffer shotBuffer, quackBuffer;
-    sf::Sound gunshot, quack;
-    sf::RectangleShape background;
-    GameView();
-    void display(sf::RenderWindow& window, const Player& player, const std::vector<Duck>& ducks);
-    void gameOver(sf::RenderWindow& window, const Player& player);
-    void loadAssets(); // Load textures, sounds, and music
-    void updateBackground(int wave);
+    sf::Text scoreText;
+    sf::Text ammoText;
+    sf::Text gameOverText;
+    sf::Texture backgroundTexture;
+    sf::Sprite backgroundSprite;
 };

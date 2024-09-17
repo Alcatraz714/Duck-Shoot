@@ -61,6 +61,9 @@
     <Image Include="assets\duck.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="assets\background.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Media Include="assets\gunshot.wav">

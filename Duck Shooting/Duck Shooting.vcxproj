@@ -35,6 +35,7 @@
     <None Include="assets\background_music.ogg" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="assets\background.png" />
     <Image Include="assets\crosshair.png" />
     <Image Include="assets\duck.png" />
   </ItemGroup>

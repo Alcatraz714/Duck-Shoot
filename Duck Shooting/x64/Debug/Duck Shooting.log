@@ -1,6 +1,2 @@
 ﻿  Duck.cpp
-C:\Users\Rishi\Desktop\Duck Shooting\Duck Shooting\Source\Models\Duck.cpp(12,45): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\Rishi\Desktop\Duck Shooting\Duck Shooting\Source\Models\Duck.cpp(12,31): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\Rishi\Desktop\Duck Shooting\Duck Shooting\Source\Models\Duck.cpp(15,18): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-C:\Users\Rishi\Desktop\Duck Shooting\Duck Shooting\Source\Models\Duck.cpp(16,18): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
   Duck Shooting.vcxproj -> C:\Users\Rishi\Desktop\Duck Shooting\x64\Debug\Duck Shooting.exe
